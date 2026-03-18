@@ -14,6 +14,8 @@
     --cyan:#06b6d4;
     --cyan-dim:#0e7490;
     --gold:#facc15;
+    --green:#34d399;
+    --pink:#ec4899;
     --text:#e2e8f0;
     --text-dim:#94a3b8;
     --border:rgba(124,58,237,.25);
@@ -22,30 +24,38 @@
 
   canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
 
-  .page{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:60px 24px 40px}
+  .page{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:48px 24px 40px}
 
-  /* ---- Header ---- */
-  .header{text-align:center;margin-bottom:56px;opacity:0;animation:fadeUp .9s ease forwards}
+  .header{text-align:center;margin-bottom:40px;opacity:0;animation:fadeUp .9s ease forwards}
   .header h1{font-size:3rem;font-weight:300;letter-spacing:.04em;line-height:1.15}
   .header h1 strong{font-weight:700;background:linear-gradient(135deg,var(--violet),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
   .header .subtitle{margin-top:12px;font-size:1.05rem;color:var(--text-dim);letter-spacing:.03em}
 
-  /* ---- Cards grid ---- */
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:36px;max-width:960px;width:100%}
+  .section-label{
+    width:100%;max-width:960px;margin-bottom:18px;
+    opacity:0;transform:translateY(20px);
+  }
+  .section-label.s1{animation:fadeUp .6s ease .15s forwards}
+  .section-label.s2{animation:fadeUp .6s ease .55s forwards}
+  .section-label h2{font-size:1rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim)}
+  .section-label .line{height:1px;background:linear-gradient(90deg,var(--border),transparent);margin-top:8px}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:28px;max-width:960px;width:100%;margin-bottom:36px}
 
   .card{
     position:relative;
     background:var(--card-bg);
     border:1px solid var(--border);
     border-radius:18px;
-    padding:36px 32px 32px;
+    padding:32px 28px 28px;
     backdrop-filter:blur(14px);
-    opacity:0;
-    transform:translateY(32px);
+    opacity:0;transform:translateY(32px);
     transition:border-color .35s,box-shadow .35s,transform .25s;
   }
-  .card:nth-child(1){animation:fadeUp .7s ease .25s forwards}
-  .card:nth-child(2){animation:fadeUp .7s ease .45s forwards}
+  .cards.top .card:nth-child(1){animation:fadeUp .7s ease .2s forwards}
+  .cards.top .card:nth-child(2){animation:fadeUp .7s ease .35s forwards}
+  .cards.bottom .card:nth-child(1){animation:fadeUp .7s ease .6s forwards}
+  .cards.bottom .card:nth-child(2){animation:fadeUp .7s ease .75s forwards}
 
   .card:hover{
     border-color:var(--violet);
@@ -53,32 +63,35 @@
     transform:translateY(-4px);
   }
 
-  .card-icon{width:100%;height:80px;margin-bottom:18px;position:relative}
+  .card-icon{width:100%;height:72px;margin-bottom:14px;position:relative}
   .card-icon canvas{width:100%;height:100%}
 
-  .card h2{font-size:1.35rem;font-weight:600;margin-bottom:8px}
-  .card .tag{display:inline-block;font-size:.7rem;text-transform:uppercase;letter-spacing:.09em;padding:3px 10px;border-radius:99px;margin-bottom:14px;font-weight:600}
-  .card:nth-child(1) .tag{background:rgba(255,85,85,.15);color:#ff5555}
-  .card:nth-child(2) .tag{background:rgba(250,204,21,.13);color:var(--gold)}
+  .card h3{font-size:1.25rem;font-weight:600;margin-bottom:6px}
+  .card .tag{display:inline-block;font-size:.65rem;text-transform:uppercase;letter-spacing:.09em;padding:3px 10px;border-radius:99px;margin-bottom:12px;font-weight:600}
+  .tag-wave{background:rgba(99,179,237,.15);color:#63b3ed}
+  .tag-sphere{background:rgba(167,139,250,.15);color:#a78bfa}
+  .tag-optim{background:rgba(255,85,85,.15);color:#ff5555}
+  .tag-topo{background:rgba(250,204,21,.13);color:var(--gold)}
 
-  .card p{font-size:.92rem;line-height:1.6;color:var(--text-dim);margin-bottom:22px}
+  .card p{font-size:.88rem;line-height:1.6;color:var(--text-dim);margin-bottom:18px}
 
   .btn{
     display:inline-flex;align-items:center;gap:8px;
-    padding:11px 28px;border:none;border-radius:10px;cursor:pointer;
-    font-size:.92rem;font-weight:600;letter-spacing:.02em;
-    color:#fff;position:relative;overflow:hidden;
+    padding:10px 24px;border:none;border-radius:10px;cursor:pointer;
+    font-size:.88rem;font-weight:600;letter-spacing:.02em;
+    color:#fff;overflow:hidden;
     transition:transform .2s,box-shadow .25s;
   }
   .btn:hover{transform:scale(1.04);box-shadow:0 0 24px rgba(124,58,237,.35)}
   .btn:active{transform:scale(.97)}
-  .btn.v1{background:linear-gradient(135deg,var(--violet),var(--violet-dim))}
-  .btn.v2{background:linear-gradient(135deg,var(--cyan-dim),var(--cyan))}
+  .btn-blue{background:linear-gradient(135deg,#2563eb,#1d4ed8)}
+  .btn-violet{background:linear-gradient(135deg,var(--violet),var(--violet-dim))}
+  .btn-red{background:linear-gradient(135deg,#dc2626,#b91c1c)}
+  .btn-cyan{background:linear-gradient(135deg,var(--cyan-dim),var(--cyan))}
   .btn .arrow{transition:transform .2s}.btn:hover .arrow{transform:translateX(3px)}
   .btn.launched{opacity:.7;pointer-events:none}
 
-  /* ---- Footer ---- */
-  .footer{margin-top:auto;padding-top:48px;text-align:center;font-size:.8rem;color:var(--text-dim);opacity:0;animation:fadeUp .7s ease .6s forwards;letter-spacing:.03em}
+  .footer{margin-top:auto;padding-top:36px;text-align:center;font-size:.8rem;color:var(--text-dim);opacity:0;animation:fadeUp .7s ease .9s forwards;letter-spacing:.03em}
 
   @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
 
@@ -95,26 +108,54 @@
 <div class="page">
   <header class="header">
     <h1>Aarnav Nagabhirava<br><strong>Quantum Projects</strong></h1>
-    <p class="subtitle">Interactive physics simulations built with Python &amp; Pygame</p>
+    <p class="subtitle">Interactive physics simulations — from foundational concepts to advanced topics</p>
   </header>
 
-  <section class="cards">
-    <!-- Card 1 -->
+  <!-- ===== Beginner / Foundational ===== -->
+  <div class="section-label s1">
+    <h2>Foundations</h2>
+    <div class="line"></div>
+  </div>
+
+  <section class="cards top">
     <div class="card">
-      <div class="card-icon"><canvas id="icon1"></canvas></div>
-      <span class="tag">Optimization</span>
-      <h2>QA vs. Gradient Descent Showdown</h2>
-      <p>Watch simulated quantum annealing tunnel through energy barriers that permanently trap stochastic gradient descent — side-by-side on the same loss landscape.</p>
-      <button class="btn v1" onclick="launch(1,this)">Launch Simulation <span class="arrow">&#10132;</span></button>
+      <div class="card-icon"><canvas id="iconWave"></canvas></div>
+      <span class="tag tag-wave">Wavefunction</span>
+      <h3>Schrödinger Evolution</h3>
+      <p>Numerically evolve a quantum wavepacket in real time — visualize Re[ψ], Im[ψ], and |ψ|². Explore tunneling, dispersion, reflection, and interference across five potential landscapes.</p>
+      <button class="btn btn-blue" onclick="launch(1,this)">Launch Simulation <span class="arrow">&#10132;</span></button>
     </div>
 
-    <!-- Card 2 -->
     <div class="card">
-      <div class="card-icon"><canvas id="icon2"></canvas></div>
-      <span class="tag">Topological Qubits</span>
-      <h2>Kitaev Chain &amp; Majorana Zero Modes</h2>
+      <div class="card-icon"><canvas id="iconBloch"></canvas></div>
+      <span class="tag tag-sphere">Spin-1/2</span>
+      <h3>Bloch Sphere &amp; Qubit Gates</h3>
+      <p>Visualize single-qubit states on an interactive 3D Bloch sphere. Apply X, Y, Z, H, S, T gates as rotations, watch precession, and see measurement probabilities update live.</p>
+      <button class="btn btn-violet" onclick="launch(2,this)">Launch Simulation <span class="arrow">&#10132;</span></button>
+    </div>
+  </section>
+
+  <!-- ===== Advanced ===== -->
+  <div class="section-label s2">
+    <h2>Advanced Topics</h2>
+    <div class="line"></div>
+  </div>
+
+  <section class="cards bottom">
+    <div class="card">
+      <div class="card-icon"><canvas id="iconQA"></canvas></div>
+      <span class="tag tag-optim">Optimization</span>
+      <h3>QA vs. Gradient Descent Showdown</h3>
+      <p>Watch simulated quantum annealing tunnel through energy barriers that permanently trap stochastic gradient descent — side-by-side on the same loss landscape.</p>
+      <button class="btn btn-red" onclick="launch(3,this)">Launch Simulation <span class="arrow">&#10132;</span></button>
+    </div>
+
+    <div class="card">
+      <div class="card-icon"><canvas id="iconKitaev"></canvas></div>
+      <span class="tag tag-topo">Topological Qubits</span>
+      <h3>Kitaev Chain &amp; Majorana Zero Modes</h3>
       <p>Explore a toy model of Microsoft's topological qubit — drag sliders across the phase boundary and watch Majorana zero modes emerge at the chain edges.</p>
-      <button class="btn v2" onclick="launch(2,this)">Launch Simulation <span class="arrow">&#10132;</span></button>
+      <button class="btn btn-cyan" onclick="launch(4,this)">Launch Simulation <span class="arrow">&#10132;</span></button>
     </div>
   </section>
 
@@ -126,39 +167,24 @@
 (function(){
   const c=document.getElementById('particles'),ctx=c.getContext('2d');
   let W,H,particles=[];
-  const N=90,MAX_D=130;
-
+  const N=80,MAX_D=130;
   function resize(){W=c.width=innerWidth;H=c.height=innerHeight}
   addEventListener('resize',resize);resize();
-
   class P{
     constructor(){this.reset()}
-    reset(){
-      this.x=Math.random()*W;this.y=Math.random()*H;
-      this.vx=(Math.random()-.5)*.35;this.vy=(Math.random()-.5)*.35;
-      this.r=Math.random()*1.6+.6;
-    }
-    update(){
-      this.x+=this.vx;this.y+=this.vy;
-      if(this.x<0||this.x>W)this.vx*=-1;
-      if(this.y<0||this.y>H)this.vy*=-1;
-    }
+    reset(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.32;this.vy=(Math.random()-.5)*.32;this.r=Math.random()*1.5+.5}
+    update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>W)this.vx*=-1;if(this.y<0||this.y>H)this.vy*=-1}
   }
   for(let i=0;i<N;i++)particles.push(new P());
-
   function draw(){
     ctx.clearRect(0,0,W,H);
     for(let i=0;i<N;i++){
       const a=particles[i];a.update();
       ctx.beginPath();ctx.arc(a.x,a.y,a.r,0,Math.PI*2);
-      ctx.fillStyle='rgba(124,58,237,.45)';ctx.fill();
+      ctx.fillStyle='rgba(124,58,237,.4)';ctx.fill();
       for(let j=i+1;j<N;j++){
         const b=particles[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy);
-        if(d<MAX_D){
-          ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
-          ctx.strokeStyle=`rgba(6,182,212,${.12*(1-d/MAX_D)})`;
-          ctx.lineWidth=.7;ctx.stroke();
-        }
+        if(d<MAX_D){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=`rgba(6,182,212,${.1*(1-d/MAX_D)})`;ctx.lineWidth=.6;ctx.stroke()}
       }
     }
     requestAnimationFrame(draw);
@@ -168,71 +194,104 @@
 
 /* ======== Mini icon canvases ======== */
 (function(){
-  /* Icon 1: animated loss landscape wave */
-  const c1=document.getElementById('icon1'),x1=c1.getContext('2d');
-  function sizeC(c){c.width=c.parentElement.clientWidth;c.height=80}
-  sizeC(c1);
-  let t1=0;
-  function drawIcon1(){
-    const W=c1.width,H=c1.height;x1.clearRect(0,0,W,H);
-    x1.beginPath();
+  function sizeC(c){c.width=c.parentElement.clientWidth;c.height=72}
+
+  /* Icon: Schrödinger wavepacket */
+  const cW=document.getElementById('iconWave'),xW=cW.getContext('2d');
+  sizeC(cW); let tW=0;
+  function drawWave(){
+    const W=cW.width,H=cW.height;xW.clearRect(0,0,W,H);
+    const cx=W*.35+tW*.3%W;
+    // |psi|^2 envelope
+    xW.beginPath();
+    for(let i=0;i<=W;i++){
+      const dx=(i-cx)/40;
+      const env=Math.exp(-dx*dx)*30;
+      const osc=Math.sin(i*.15-tW*.06)*env;
+      const y=H/2-osc;
+      i===0?xW.moveTo(i,y):xW.lineTo(i,y);
+    }
+    xW.strokeStyle='rgba(99,179,237,.7)';xW.lineWidth=2;xW.stroke();
+    // probability fill
+    xW.beginPath();
+    for(let i=0;i<=W;i++){
+      const dx=(i-cx)/40;
+      const env=Math.exp(-dx*dx)*25;
+      xW.lineTo(i,H/2-env);
+    }
+    for(let i=W;i>=0;i--) xW.lineTo(i,H/2);
+    xW.closePath();xW.fillStyle='rgba(167,139,250,.12)';xW.fill();
+    tW++;requestAnimationFrame(drawWave);
+  }
+  drawWave();
+
+  /* Icon: Bloch sphere (wireframe circle + vector) */
+  const cB=document.getElementById('iconBloch'),xB=cB.getContext('2d');
+  sizeC(cB); let tB=0;
+  function drawBloch(){
+    const W=cB.width,H=cB.height,cx=W/2,cy=H/2,r=28;
+    xB.clearRect(0,0,W,H);
+    // sphere circles
+    xB.beginPath();xB.ellipse(cx,cy,r,r,0,0,Math.PI*2);
+    xB.strokeStyle='rgba(167,139,250,.3)';xB.lineWidth=1.2;xB.stroke();
+    xB.beginPath();xB.ellipse(cx,cy,r,r*.35,0,0,Math.PI*2);
+    xB.strokeStyle='rgba(99,179,237,.25)';xB.stroke();
+    // state vector
+    const ang=tB*.025;
+    const vx=cx+r*.7*Math.sin(ang);
+    const vy=cy-r*.6*Math.cos(ang*.7);
+    xB.beginPath();xB.moveTo(cx,cy);xB.lineTo(vx,vy);
+    xB.strokeStyle='rgba(167,139,250,.8)';xB.lineWidth=2;xB.stroke();
+    xB.beginPath();xB.arc(vx,vy,4,0,Math.PI*2);
+    xB.fillStyle='#a78bfa';xB.fill();
+    // trail
+    for(let i=0;i<8;i++){
+      const a2=ang-i*.08;
+      const tx=cx+r*.7*Math.sin(a2);
+      const ty=cy-r*.6*Math.cos(a2*.7);
+      xB.beginPath();xB.arc(tx,ty,1.5,0,Math.PI*2);
+      xB.fillStyle=`rgba(99,179,237,${.5-i*.06})`;xB.fill();
+    }
+    tB++;requestAnimationFrame(drawBloch);
+  }
+  drawBloch();
+
+  /* Icon: QA loss landscape */
+  const cQ=document.getElementById('iconQA'),xQ=cQ.getContext('2d');
+  sizeC(cQ); let tQ=0;
+  function drawQA(){
+    const W=cQ.width,H=cQ.height;xQ.clearRect(0,0,W,H);
+    xQ.beginPath();
     for(let i=0;i<=W;i++){
       const x=i/W*4*Math.PI;
-      const y=H*.5+Math.sin(x+t1*.02)*14-Math.sin(x*2.3+t1*.015)*8+Math.cos(x*.7-t1*.01)*10;
-      i===0?x1.moveTo(i,y):x1.lineTo(i,y);
+      const y=H*.5+Math.sin(x+tQ*.02)*14-Math.sin(x*2.3+tQ*.015)*8+Math.cos(x*.7-tQ*.01)*10;
+      i===0?xQ.moveTo(i,y):xQ.lineTo(i,y);
     }
-    x1.strokeStyle='rgba(255,85,85,.6)';x1.lineWidth=2;x1.stroke();
-    x1.lineTo(W,H);x1.lineTo(0,H);x1.closePath();
-    x1.fillStyle='rgba(255,85,85,.07)';x1.fill();
-
-    const bx=W*.72,by=H*.5+Math.sin(W*.72/W*4*Math.PI+t1*.02)*14
-      -Math.sin((W*.72/W*4*Math.PI)*2.3+t1*.015)*8
-      +Math.cos((W*.72/W*4*Math.PI)*.7-t1*.01)*10;
-    x1.beginPath();x1.arc(bx,by,4,0,Math.PI*2);
-    x1.fillStyle='#ff5555';x1.fill();
-    x1.beginPath();x1.arc(bx,by,9,0,Math.PI*2);
-    x1.strokeStyle='rgba(255,85,85,.3)';x1.lineWidth=2;x1.stroke();
-
-    t1++;requestAnimationFrame(drawIcon1);
+    xQ.strokeStyle='rgba(255,85,85,.6)';xQ.lineWidth=2;xQ.stroke();
+    xQ.lineTo(W,H);xQ.lineTo(0,H);xQ.closePath();xQ.fillStyle='rgba(255,85,85,.06)';xQ.fill();
+    const bx=W*.72,by=H*.5+Math.sin(W*.72/W*4*Math.PI+tQ*.02)*14-Math.sin((W*.72/W*4*Math.PI)*2.3+tQ*.015)*8+Math.cos((W*.72/W*4*Math.PI)*.7-tQ*.01)*10;
+    xQ.beginPath();xQ.arc(bx,by,4,0,Math.PI*2);xQ.fillStyle='#ff5555';xQ.fill();
+    tQ++;requestAnimationFrame(drawQA);
   }
-  drawIcon1();
+  drawQA();
 
-  /* Icon 2: chain of connected dots (Majorana pairs) */
-  const c2=document.getElementById('icon2'),x2=c2.getContext('2d');
-  sizeC(c2);
-  let t2=0;
-  function drawIcon2(){
-    const W=c2.width,H=c2.height,nSites=8,gap=W/(nSites+1);
-    x2.clearRect(0,0,W,H);
+  /* Icon: Kitaev chain */
+  const cK=document.getElementById('iconKitaev'),xK=cK.getContext('2d');
+  sizeC(cK); let tK=0;
+  function drawKitaev(){
+    const W=cK.width,H=cK.height,nS=8,gap=W/(nS+1);
+    xK.clearRect(0,0,W,H);
     const sites=[];
-    for(let i=0;i<nSites;i++){
-      const cx=gap*(i+1),cy=H/2+Math.sin(t2*.025+i*.7)*6;
-      sites.push({x:cx,y:cy});
-    }
-    for(let i=0;i<nSites-1;i++){
-      const a=sites[i],b=sites[i+1];
-      const pulse=.45+.25*Math.sin(t2*.04+i);
-      x2.beginPath();x2.moveTo(a.x+8,a.y);x2.lineTo(b.x-8,b.y);
-      x2.strokeStyle=`rgba(6,182,212,${pulse})`;x2.lineWidth=2.5;x2.stroke();
-    }
-    for(let i=0;i<nSites;i++){
-      const s=sites[i];
-      x2.beginPath();x2.arc(s.x-5,s.y,5,0,Math.PI*2);
-      x2.fillStyle='rgba(251,146,60,.7)';x2.fill();
-      x2.beginPath();x2.arc(s.x+5,s.y,5,0,Math.PI*2);
-      x2.fillStyle='rgba(56,189,248,.7)';x2.fill();
-    }
-    const gl=sites[0],gr=sites[nSites-1];
-    const ga=.5+.4*Math.sin(t2*.06);
-    [gl,gr].forEach(s=>{
-      x2.beginPath();x2.arc(s.x-(s===gl?5:-5),s.y,11,0,Math.PI*2);
-      x2.strokeStyle=`rgba(250,204,21,${ga})`;x2.lineWidth=2;x2.stroke();
-    });
-    t2++;requestAnimationFrame(drawIcon2);
+    for(let i=0;i<nS;i++){const cx=gap*(i+1),cy=H/2+Math.sin(tK*.025+i*.7)*5;sites.push({x:cx,y:cy})}
+    for(let i=0;i<nS-1;i++){const a=sites[i],b=sites[i+1];const p=.4+.25*Math.sin(tK*.04+i);xK.beginPath();xK.moveTo(a.x+7,a.y);xK.lineTo(b.x-7,b.y);xK.strokeStyle=`rgba(6,182,212,${p})`;xK.lineWidth=2;xK.stroke()}
+    for(let i=0;i<nS;i++){const s=sites[i];xK.beginPath();xK.arc(s.x-4,s.y,4,0,Math.PI*2);xK.fillStyle='rgba(251,146,60,.7)';xK.fill();xK.beginPath();xK.arc(s.x+4,s.y,4,0,Math.PI*2);xK.fillStyle='rgba(56,189,248,.7)';xK.fill()}
+    const gl=sites[0],gr=sites[nS-1],ga=.4+.4*Math.sin(tK*.06);
+    [gl,gr].forEach(s=>{xK.beginPath();xK.arc(s.x-(s===gl?4:-4),s.y,10,0,Math.PI*2);xK.strokeStyle=`rgba(250,204,21,${ga})`;xK.lineWidth=1.5;xK.stroke()});
+    tK++;requestAnimationFrame(drawKitaev);
   }
-  drawIcon2();
+  drawKitaev();
 
-  addEventListener('resize',()=>{sizeC(c1);sizeC(c2)});
+  addEventListener('resize',()=>{sizeC(cW);sizeC(cB);sizeC(cQ);sizeC(cK)});
 })();
 
 /* ======== Launch handler ======== */
@@ -241,11 +300,11 @@ async function launch(id,btn){
   try{
     const r=await fetch('/launch/'+id,{method:'POST'});
     const d=await r.json();
-    if(d.status==='launched') btn.textContent='Launched ✓';
+    if(d.status==='launched') btn.textContent='Launched \u2713';
     else if(d.status==='already_running') btn.textContent='Already Running';
     else btn.textContent='Error';
   }catch(e){btn.textContent='Server offline';console.error(e)}
-  setTimeout(()=>{btn.textContent=id==='1'?'Launch Simulation ➔':'Launch Simulation ➔';btn.classList.remove('launched')},3000);
+  setTimeout(()=>{btn.textContent='Launch Simulation \u27B6';btn.classList.remove('launched')},3000);
 }
 </script>
 </body>

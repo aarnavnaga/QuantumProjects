@@ -19,8 +19,10 @@ PORT = 8000
 PROJECT_DIR = Path(__file__).resolve().parent
 
 PROJECTS = {
-    "1": {"script": "quantum_vs_gradient.py", "name": "QA vs Gradient Descent"},
-    "2": {"script": "kitaev_chain.py", "name": "Kitaev Chain"},
+    "1": {"script": "schrodinger_evolution.py", "name": "Schrödinger Evolution"},
+    "2": {"script": "bloch_sphere.py", "name": "Bloch Sphere"},
+    "3": {"script": "quantum_vs_gradient.py", "name": "QA vs Gradient Descent"},
+    "4": {"script": "kitaev_chain.py", "name": "Kitaev Chain"},
 }
 
 running_processes: dict[str, subprocess.Popen] = {}
