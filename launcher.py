@@ -4,7 +4,7 @@ Quantum Projects Hub -- Launcher
 Serves the dashboard and starts Pygame simulations.
 
 Launch works via GET or POST: /launch/<id>
-  schrodinger, bloch, qa-gradient, kitaev  (or 1, 2, 3, 4)
+  schrodinger, bloch, cards, qa-gradient, kitaev  (or 1–5)
 
 Usage:  python3 launcher.py
 """
@@ -25,12 +25,18 @@ PROJECT_DIR = Path(__file__).resolve().parent
 PROJECTS = {
     "schrodinger": {"script": "schrodinger_evolution.py", "name": "Schrödinger Evolution"},
     "bloch": {"script": "bloch_sphere.py", "name": "Bloch Sphere"},
+    "cards": {"script": "cards_superposition_entanglement.py", "name": "Cards: Superposition & Entanglement"},
     "qa-gradient": {"script": "quantum_vs_gradient.py", "name": "QA vs Gradient Descent"},
     "kitaev": {"script": "kitaev_chain.py", "name": "Kitaev Chain"},
 }
 
-# Numeric aliases (same order as dashboard: foundations first, then advanced)
-NUMERIC = {"1": "schrodinger", "2": "bloch", "3": "qa-gradient", "4": "kitaev"}
+NUMERIC = {
+    "1": "schrodinger",
+    "2": "bloch",
+    "3": "cards",
+    "4": "qa-gradient",
+    "5": "kitaev",
+}
 
 running_processes: dict[str, subprocess.Popen] = {}
 

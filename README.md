@@ -32,6 +32,12 @@ Visualize single-qubit states on an interactive 3D Bloch sphere with full mouse-
 
 **Run directly:** `python3 bloch_sphere.py`
 
+### 3. Superposition & Entanglement (Playing Cards)
+
+Deck-of-cards analogy: **Superposition** — one “quantum card” blended between ♥ and ♠ until you measure; probabilities follow the Born rule. **Entanglement** — Alice and Bob each get a sealed card prepared in a Bell-like state (both ♥ or both ♠); measuring Alice’s card reveals the correlated outcome for Bob.
+
+**Run directly:** `python3 cards_superposition_entanglement.py`
+
 - Apply quantum gates (X, Y, Z, H, S, T) and watch animated rotations on the sphere
 - Preset states: |0⟩, |1⟩, |+⟩, |−⟩, |+i⟩, |−i⟩
 - Continuous Z-axis precession mode
@@ -42,7 +48,7 @@ Visualize single-qubit states on an interactive 3D Bloch sphere with full mouse-
 
 ## Advanced Topics
 
-### 3. QA vs. Gradient Descent Showdown
+### 4. QA vs. Gradient Descent Showdown
 
 Side-by-side comparison of Simulated Quantum Annealing vs. SGD on a multi-minima loss landscape. Watch quantum tunneling escape local minima that trap gradient descent.
 
@@ -52,7 +58,7 @@ Side-by-side comparison of Simulated Quantum Annealing vs. SGD on a multi-minima
 - Quantum wavefunction overlay and tunneling flash effects
 - Interactive play/pause, reset, and speed controls
 
-### 4. Kitaev Chain — Majorana Zero Modes
+### 5. Kitaev Chain — Majorana Zero Modes
 
 Interactive simulation of the 1D Kitaev chain model for topological superconductivity — the toy model behind Microsoft's topological qubit.
 

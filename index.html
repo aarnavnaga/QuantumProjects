@@ -32,7 +32,7 @@
   .header .subtitle{margin-top:12px;font-size:1.05rem;color:var(--text-dim);letter-spacing:.03em}
 
   .section-label{
-    width:100%;max-width:960px;margin-bottom:18px;
+    width:100%;max-width:1180px;margin-bottom:18px;
     opacity:0;transform:translateY(20px);
   }
   .section-label.s1{animation:fadeUp .6s ease .15s forwards}
@@ -40,7 +40,7 @@
   .section-label h2{font-size:1rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim)}
   .section-label .line{height:1px;background:linear-gradient(90deg,var(--border),transparent);margin-top:8px}
 
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:28px;max-width:960px;width:100%;margin-bottom:36px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px;max-width:1180px;width:100%;margin-bottom:36px}
 
   .card{
     position:relative;
@@ -54,6 +54,7 @@
   }
   .cards.top .card:nth-child(1){animation:fadeUp .7s ease .2s forwards}
   .cards.top .card:nth-child(2){animation:fadeUp .7s ease .35s forwards}
+  .cards.top .card:nth-child(3){animation:fadeUp .7s ease .5s forwards}
   .cards.bottom .card:nth-child(1){animation:fadeUp .7s ease .6s forwards}
   .cards.bottom .card:nth-child(2){animation:fadeUp .7s ease .75s forwards}
 
@@ -72,6 +73,7 @@
   .tag-sphere{background:rgba(167,139,250,.15);color:#a78bfa}
   .tag-optim{background:rgba(255,85,85,.15);color:#ff5555}
   .tag-topo{background:rgba(250,204,21,.13);color:var(--gold)}
+  .tag-cards{background:rgba(52,211,153,.15);color:var(--green)}
 
   .card p{font-size:.88rem;line-height:1.6;color:var(--text-dim);margin-bottom:18px}
 
@@ -88,6 +90,7 @@
   .btn-violet{background:linear-gradient(135deg,var(--violet),var(--violet-dim))}
   .btn-red{background:linear-gradient(135deg,#dc2626,#b91c1c)}
   .btn-cyan{background:linear-gradient(135deg,var(--cyan-dim),var(--cyan))}
+  .btn-emerald{background:linear-gradient(135deg,#059669,#34d399)}
   .btn .arrow{transition:transform .2s}.btn:hover .arrow{transform:translateX(3px)}
   .btn.launched{opacity:.7;pointer-events:none}
 
@@ -133,6 +136,14 @@
       <h3>Bloch Sphere &amp; Qubit Gates</h3>
       <p>Visualize single-qubit states on an interactive 3D Bloch sphere. Apply X, Y, Z, H, S, T gates as rotations, watch precession, and see measurement probabilities update live.</p>
       <button class="btn btn-violet" onclick="launch('bloch',this)">Launch Simulation <span class="arrow">&#10132;</span></button>
+    </div>
+
+    <div class="card">
+      <div class="card-icon"><canvas id="iconCards"></canvas></div>
+      <span class="tag tag-cards">Deck analogy</span>
+      <h3>Superposition &amp; Entanglement (Playing Cards)</h3>
+      <p>Two modes: a single &quot;quantum card&quot; in superposition until you measure — then a Bell-style pair where Alice and Bob&apos;s sealed cards always match ♥♥ or ♠♠, illustrating entanglement.</p>
+      <button class="btn btn-emerald" onclick="launch('cards',this)">Launch Simulation <span class="arrow">&#10132;</span></button>
     </div>
   </section>
 
@@ -292,7 +303,32 @@
   }
   drawKitaev();
 
-  addEventListener('resize',()=>{sizeC(cW);sizeC(cB);sizeC(cQ);sizeC(cK)});
+  /* Icon: two entangled playing cards */
+  const cC=document.getElementById('iconCards'),xC=cC.getContext('2d');
+  sizeC(cC); let tC=0;
+  function drawCardsIcon(){
+    const W=cC.width,H=cC.height;xC.clearRect(0,0,W,H);
+    const ox=W*.35,oy=H*.2,dx=18,dy=10;
+    const w=52,h=72,r=6;
+    function card(px,py,rot,col,alpha){
+      xC.save();xC.translate(px+w/2,py+h/2);xC.rotate(rot);
+      xC.globalAlpha=alpha;
+      xC.fillStyle='#f8fafc';xC.strokeStyle='rgba(124,58,237,.5)';
+      xC.fillRect(-w/2,-h/2,w,h);xC.strokeRect(-w/2,-h/2,w,h);
+      xC.font='bold 22px Menlo,monospace';xC.fillStyle=col;xC.textAlign='center';
+      xC.fillText(col==='#ef4444'?'\u2665':'\u2660',0,6);
+      xC.restore();xC.globalAlpha=1;
+    }
+    card(ox,oy,-.15,'#ef4444',.45+.25*Math.sin(tC*.05));
+    card(ox+dx,oy+dy,.15,'#64748b',.45+.25*Math.sin(tC*.05+1.2));
+    const pulse=.5+.4*Math.sin(tC*.08);
+    xC.strokeStyle=`rgba(250,204,21,${pulse})`;xC.lineWidth=1.5;
+    xC.beginPath();xC.moveTo(ox+w/2,oy+h);xC.lineTo(ox+dx+w/2,oy+dy+h);xC.stroke();
+    tC++;requestAnimationFrame(drawCardsIcon);
+  }
+  drawCardsIcon();
+
+  addEventListener('resize',()=>{sizeC(cW);sizeC(cB);sizeC(cC);sizeC(cQ);sizeC(cK)});
 })();
 
 /* ======== Launch handler (GET — works reliably with local Python server) ======== */
