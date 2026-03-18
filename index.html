@@ -123,7 +123,7 @@
       <span class="tag tag-wave">Wavefunction</span>
       <h3>Schrödinger Evolution</h3>
       <p>Numerically evolve a quantum wavepacket in real time — visualize Re[ψ], Im[ψ], and |ψ|². Explore tunneling, dispersion, reflection, and interference across five potential landscapes.</p>
-      <button class="btn btn-blue" onclick="launch(1,this)">Launch Simulation <span class="arrow">&#10132;</span></button>
+      <button class="btn btn-blue" onclick="launch('schrodinger',this)">Launch Simulation <span class="arrow">&#10132;</span></button>
     </div>
 
     <div class="card">
@@ -131,7 +131,7 @@
       <span class="tag tag-sphere">Spin-1/2</span>
       <h3>Bloch Sphere &amp; Qubit Gates</h3>
       <p>Visualize single-qubit states on an interactive 3D Bloch sphere. Apply X, Y, Z, H, S, T gates as rotations, watch precession, and see measurement probabilities update live.</p>
-      <button class="btn btn-violet" onclick="launch(2,this)">Launch Simulation <span class="arrow">&#10132;</span></button>
+      <button class="btn btn-violet" onclick="launch('bloch',this)">Launch Simulation <span class="arrow">&#10132;</span></button>
     </div>
   </section>
 
@@ -147,7 +147,7 @@
       <span class="tag tag-optim">Optimization</span>
       <h3>QA vs. Gradient Descent Showdown</h3>
       <p>Watch simulated quantum annealing tunnel through energy barriers that permanently trap stochastic gradient descent — side-by-side on the same loss landscape.</p>
-      <button class="btn btn-red" onclick="launch(3,this)">Launch Simulation <span class="arrow">&#10132;</span></button>
+      <button class="btn btn-red" onclick="launch('qa-gradient',this)">Launch Simulation <span class="arrow">&#10132;</span></button>
     </div>
 
     <div class="card">
@@ -155,7 +155,7 @@
       <span class="tag tag-topo">Topological Qubits</span>
       <h3>Kitaev Chain &amp; Majorana Zero Modes</h3>
       <p>Explore a toy model of Microsoft's topological qubit — drag sliders across the phase boundary and watch Majorana zero modes emerge at the chain edges.</p>
-      <button class="btn btn-cyan" onclick="launch(4,this)">Launch Simulation <span class="arrow">&#10132;</span></button>
+      <button class="btn btn-cyan" onclick="launch('kitaev',this)">Launch Simulation <span class="arrow">&#10132;</span></button>
     </div>
   </section>
 
@@ -295,10 +295,10 @@
 })();
 
 /* ======== Launch handler ======== */
-async function launch(id,btn){
+async function launch(slug,btn){
   btn.textContent='Launching...';btn.classList.add('launched');
   try{
-    const r=await fetch('/launch/'+id,{method:'POST'});
+    const r=await fetch('/launch/'+encodeURIComponent(slug),{method:'POST'});
     const d=await r.json();
     if(d.status==='launched') btn.textContent='Launched \u2713';
     else if(d.status==='already_running') btn.textContent='Already Running';

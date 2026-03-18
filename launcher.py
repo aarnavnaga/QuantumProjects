@@ -14,15 +14,17 @@ import subprocess
 import sys
 import webbrowser
 from pathlib import Path
+from urllib.parse import unquote, urlparse
 
 PORT = 8000
 PROJECT_DIR = Path(__file__).resolve().parent
 
+# Slug -> script (explicit names avoid any button/ID mix-ups)
 PROJECTS = {
-    "1": {"script": "schrodinger_evolution.py", "name": "Schrödinger Evolution"},
-    "2": {"script": "bloch_sphere.py", "name": "Bloch Sphere"},
-    "3": {"script": "quantum_vs_gradient.py", "name": "QA vs Gradient Descent"},
-    "4": {"script": "kitaev_chain.py", "name": "Kitaev Chain"},
+    "schrodinger": {"script": "schrodinger_evolution.py", "name": "Schrödinger Evolution"},
+    "bloch": {"script": "bloch_sphere.py", "name": "Bloch Sphere"},
+    "qa-gradient": {"script": "quantum_vs_gradient.py", "name": "QA vs Gradient Descent"},
+    "kitaev": {"script": "kitaev_chain.py", "name": "Kitaev Chain"},
 }
 
 running_processes: dict[str, subprocess.Popen] = {}
@@ -33,9 +35,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         super().__init__(*args, directory=str(PROJECT_DIR), **kwargs)
 
     def do_POST(self):
-        if self.path.startswith("/launch/"):
-            project_id = self.path.split("/")[-1]
-            if project_id not in PROJECTS:
+        path_only = urlparse(self.path).path.rstrip("/")
+        if path_only.startswith("/launch/"):
+            project_id = unquote(path_only.split("/launch/", 1)[1].split("/")[0])
+            if not project_id or project_id not in PROJECTS:
                 self._json_response(404, {"error": "Unknown project"})
                 return
 
