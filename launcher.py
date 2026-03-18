@@ -41,11 +41,32 @@ NUMERIC = {
 running_processes: dict[str, subprocess.Popen] = {}
 
 
+# Extra URL aliases → canonical slug (covers bookmarks / old links)
+SLUG_ALIASES = {
+    "superposition": "cards",
+    "entanglement": "cards",
+    "deck": "cards",
+    "playing-cards": "cards",
+    "cards-superposition": "cards",
+}
+
+
 def _resolve_key(raw: str) -> str | None:
-    raw = (raw or "").strip()
+    raw = (raw or "").strip().lower()
+    if not raw:
+        return None
     if raw in NUMERIC:
         raw = NUMERIC[raw]
+    raw = SLUG_ALIASES.get(raw, raw)
     return raw if raw in PROJECTS else None
+
+
+def _launch_slug_from_path(path_only: str) -> str | None:
+    """Extract slug from /launch/<slug> only — avoids /launcher.py matching /launch."""
+    segs = [s for s in path_only.strip("/").split("/") if s]
+    if len(segs) >= 2 and segs[0].lower() == "launch":
+        return segs[1]
+    return None
 
 
 def _drain_request_body(handler):
@@ -63,17 +84,17 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def _try_launch(self) -> bool:
         path_only = urlparse(self.path).path
-        if not path_only.startswith("/launch"):
+        slug = _launch_slug_from_path(path_only)
+        if slug is None:
             return False
-        # /launch/foo or /launch/foo/
-        tail = path_only[len("/launch") :].lstrip("/")
-        key = _resolve_key(unquote(tail.split("/")[0]))
+        key = _resolve_key(unquote(slug))
         if not key:
+            valid = ", ".join(sorted(PROJECTS.keys()))
             self._json_response(
                 404,
                 {
                     "status": "error",
-                    "error": f"Unknown launch target: {tail!r}. Use schrodinger, bloch, qa-gradient, or kitaev.",
+                    "error": f"Unknown launch target {slug!r}. Valid: {valid}",
                 },
             )
             return True
