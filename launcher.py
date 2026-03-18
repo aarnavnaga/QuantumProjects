@@ -1,8 +1,10 @@
 """
 Quantum Projects Hub -- Launcher
 ================================
-Lightweight HTTP server that serves the landing page and launches
-Pygame projects on button click.
+Serves the dashboard and starts Pygame simulations.
+
+Launch works via GET or POST: /launch/<id>
+  schrodinger, bloch, qa-gradient, kitaev  (or 1, 2, 3, 4)
 
 Usage:  python3 launcher.py
 """
@@ -19,7 +21,7 @@ from urllib.parse import unquote, urlparse
 PORT = 8000
 PROJECT_DIR = Path(__file__).resolve().parent
 
-# Slug -> script (explicit names avoid any button/ID mix-ups)
+# Primary slugs -> script
 PROJECTS = {
     "schrodinger": {"script": "schrodinger_evolution.py", "name": "Schrödinger Evolution"},
     "bloch": {"script": "bloch_sphere.py", "name": "Bloch Sphere"},
@@ -27,46 +29,108 @@ PROJECTS = {
     "kitaev": {"script": "kitaev_chain.py", "name": "Kitaev Chain"},
 }
 
+# Numeric aliases (same order as dashboard: foundations first, then advanced)
+NUMERIC = {"1": "schrodinger", "2": "bloch", "3": "qa-gradient", "4": "kitaev"}
+
 running_processes: dict[str, subprocess.Popen] = {}
+
+
+def _resolve_key(raw: str) -> str | None:
+    raw = (raw or "").strip()
+    if raw in NUMERIC:
+        raw = NUMERIC[raw]
+    return raw if raw in PROJECTS else None
+
+
+def _drain_request_body(handler):
+    try:
+        n = int(handler.headers.get("Content-Length", 0) or 0)
+        if n > 0:
+            handler.rfile.read(n)
+    except Exception:
+        pass
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(PROJECT_DIR), **kwargs)
 
-    def do_POST(self):
-        path_only = urlparse(self.path).path.rstrip("/")
-        if path_only.startswith("/launch/"):
-            project_id = unquote(path_only.split("/launch/", 1)[1].split("/")[0])
-            if not project_id or project_id not in PROJECTS:
-                self._json_response(404, {"error": "Unknown project"})
-                return
+    def _try_launch(self) -> bool:
+        path_only = urlparse(self.path).path
+        if not path_only.startswith("/launch"):
+            return False
+        # /launch/foo or /launch/foo/
+        tail = path_only[len("/launch") :].lstrip("/")
+        key = _resolve_key(unquote(tail.split("/")[0]))
+        if not key:
+            self._json_response(
+                404,
+                {
+                    "status": "error",
+                    "error": f"Unknown launch target: {tail!r}. Use schrodinger, bloch, qa-gradient, or kitaev.",
+                },
+            )
+            return True
 
-            info = PROJECTS[project_id]
-            script = PROJECT_DIR / info["script"]
-            if not script.exists():
-                self._json_response(404, {"error": f"{info['script']} not found"})
-                return
+        info = PROJECTS[key]
+        script = PROJECT_DIR / info["script"]
+        if not script.exists():
+            self._json_response(
+                404,
+                {"status": "error", "error": f"Missing file: {info['script']}"},
+            )
+            return True
 
-            old = running_processes.get(project_id)
-            if old and old.poll() is None:
-                self._json_response(200, {"status": "already_running", "name": info["name"]})
-                return
+        old = running_processes.get(key)
+        if old and old.poll() is None:
+            self._json_response(
+                200,
+                {"status": "already_running", "name": info["name"]},
+            )
+            return True
 
+        try:
             proc = subprocess.Popen(
                 [sys.executable, str(script)],
                 cwd=str(PROJECT_DIR),
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                start_new_session=True,
             )
-            running_processes[project_id] = proc
-            self._json_response(200, {"status": "launched", "name": info["name"], "pid": proc.pid})
-        else:
-            self._json_response(404, {"error": "Not found"})
+        except OSError as e:
+            self._json_response(
+                500,
+                {"status": "error", "error": str(e)},
+            )
+            return True
+
+        running_processes[key] = proc
+        print(f"  Launched {info['name']} -> {script} (pid {proc.pid})")
+        self._json_response(
+            200,
+            {"status": "launched", "name": info["name"], "pid": proc.pid},
+        )
+        return True
+
+    def do_GET(self):
+        _drain_request_body(self)
+        if self._try_launch():
+            return
+        super().do_GET()
+
+    def do_POST(self):
+        _drain_request_body(self)
+        if self._try_launch():
+            return
+        self._json_response(404, {"status": "error", "error": "Not found"})
 
     def _json_response(self, code, data):
         body = json.dumps(data).encode()
         self.send_response(code)
-        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
+        self.send_header("Cache-Control", "no-store")
         self.end_headers()
         self.wfile.write(body)
 
@@ -79,15 +143,15 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 def main():
     os.chdir(PROJECT_DIR)
     server = http.server.HTTPServer(("", PORT), Handler)
-    url = f"http://localhost:{PORT}"
-    print(f"Quantum Projects Hub running at {url}")
-    print("Press Ctrl+C to stop.\n")
+    url = f"http://127.0.0.1:{PORT}"
+    print(f"Quantum Projects Hub: {url}")
+    print("Open that URL and click Launch — Pygame windows open separately.\n")
     webbrowser.open(url)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
         print("\nShutting down...")
-        for pid, proc in running_processes.items():
+        for _k, proc in running_processes.items():
             if proc.poll() is None:
                 proc.terminate()
         server.server_close()

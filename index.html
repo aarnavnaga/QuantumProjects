@@ -109,6 +109,7 @@
   <header class="header">
     <h1>Aarnav Nagabhirava<br><strong>Quantum Projects</strong></h1>
     <p class="subtitle">Interactive physics simulations — from foundational concepts to advanced topics</p>
+    <p class="hub-note" style="margin-top:16px;font-size:.88rem;color:#64748b;max-width:520px;margin-left:auto;margin-right:auto;line-height:1.5">Start the hub first: <code style="background:rgba(124,58,237,.15);padding:2px 8px;border-radius:6px;color:#a78bfa">python3 launcher.py</code> — then click Launch (opens a separate Pygame window).</p>
   </header>
 
   <!-- ===== Beginner / Foundational ===== -->
@@ -294,17 +295,30 @@
   addEventListener('resize',()=>{sizeC(cW);sizeC(cB);sizeC(cQ);sizeC(cK)});
 })();
 
-/* ======== Launch handler ======== */
+/* ======== Launch handler (GET — works reliably with local Python server) ======== */
 async function launch(slug,btn){
   btn.textContent='Launching...';btn.classList.add('launched');
   try{
-    const r=await fetch('/launch/'+encodeURIComponent(slug),{method:'POST'});
-    const d=await r.json();
+    const r=await fetch('/launch/'+encodeURIComponent(slug)+'?_='+Date.now(),{
+      method:'GET',
+      cache:'no-store',
+      headers:{'Accept':'application/json'}
+    });
+    const txt=await r.text();
+    let d;
+    try{d=JSON.parse(txt);}catch(_){
+      btn.textContent='Bad response — use python3 launcher.py';
+      setTimeout(()=>{btn.textContent='Launch Simulation \u27B6';btn.classList.remove('launched')},4000);
+      return;
+    }
     if(d.status==='launched') btn.textContent='Launched \u2713';
-    else if(d.status==='already_running') btn.textContent='Already Running';
-    else btn.textContent='Error';
-  }catch(e){btn.textContent='Server offline';console.error(e)}
-  setTimeout(()=>{btn.textContent='Launch Simulation \u27B6';btn.classList.remove('launched')},3000);
+    else if(d.status==='already_running') btn.textContent='Already open';
+    else btn.textContent=(d.error||'Failed').slice(0,40);
+  }catch(e){
+    btn.textContent='Run: python3 launcher.py';
+    console.error(e);
+  }
+  setTimeout(()=>{btn.textContent='Launch Simulation \u27B6';btn.classList.remove('launched')},3500);
 }
 </script>
 </body>
