@@ -14,6 +14,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 import webbrowser
 from pathlib import Path
 from urllib.parse import unquote, urlparse
@@ -116,19 +117,34 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             )
             return True
 
+        # Pygame needs the same environment as the GUI session. On macOS,
+        # start_new_session + closed stdio often prevents a window from appearing.
+        env = os.environ.copy()
         try:
             proc = subprocess.Popen(
                 [sys.executable, str(script)],
                 cwd=str(PROJECT_DIR),
+                env=env,
                 stdin=subprocess.DEVNULL,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-                start_new_session=True,
+                # Inherit stdout/stderr so crashes show in the terminal running launcher.py
             )
         except OSError as e:
             self._json_response(
                 500,
                 {"status": "error", "error": str(e)},
+            )
+            return True
+
+        # If the script exits immediately (syntax error, pygame init), report it
+        time.sleep(0.2)
+        code = proc.poll()
+        if code is not None:
+            self._json_response(
+                500,
+                {
+                    "status": "error",
+                    "error": f"Simulation exited immediately (code {code}). Run in Terminal: python3 {info['script']}",
+                },
             )
             return True
 

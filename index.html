@@ -331,30 +331,36 @@
   addEventListener('resize',()=>{sizeC(cW);sizeC(cB);sizeC(cC);sizeC(cQ);sizeC(cK)});
 })();
 
-/* ======== Launch handler (GET — works reliably with local Python server) ======== */
+/* ======== Launch handler (GET — same origin as this page) ======== */
 async function launch(slug,btn){
   btn.textContent='Launching...';btn.classList.add('launched');
+  const root=(typeof location!=='undefined'&&location.origin)?location.origin:'';
+  const url=root+'/launch/'+encodeURIComponent(slug)+'?_='+Date.now();
   try{
-    const r=await fetch('/launch/'+encodeURIComponent(slug)+'?_='+Date.now(),{
+    const r=await fetch(url,{
       method:'GET',
       cache:'no-store',
+      credentials:'same-origin',
       headers:{'Accept':'application/json'}
     });
     const txt=await r.text();
     let d;
     try{d=JSON.parse(txt);}catch(_){
-      btn.textContent='Bad response — use python3 launcher.py';
-      setTimeout(()=>{btn.textContent='Launch Simulation \u27B6';btn.classList.remove('launched')},4000);
+      btn.textContent='Open this site via python3 launcher.py (not Live Server)';
+      setTimeout(()=>{btn.textContent='Launch Simulation \u27B6';btn.classList.remove('launched')},5000);
       return;
     }
-    if(d.status==='launched') btn.textContent='Launched \u2713';
-    else if(d.status==='already_running') btn.textContent='Already open';
-    else btn.textContent=(d.error||'Failed').slice(0,40);
+    if(!r.ok){
+      btn.textContent=(d.error||('HTTP '+r.status)).slice(0,48);
+    }else if(d.status==='launched'){
+      btn.textContent='Launched \u2713 check Dock / taskbar';
+    }else if(d.status==='already_running') btn.textContent='Already open';
+    else btn.textContent=(d.error||'Failed').slice(0,44);
   }catch(e){
-    btn.textContent='Run: python3 launcher.py';
+    btn.textContent='Start hub: python3 launcher.py';
     console.error(e);
   }
-  setTimeout(()=>{btn.textContent='Launch Simulation \u27B6';btn.classList.remove('launched')},3500);
+  setTimeout(()=>{btn.textContent='Launch Simulation \u27B6';btn.classList.remove('launched')},4500);
 }
 </script>
 </body>

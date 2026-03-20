@@ -308,8 +308,8 @@ def main():
             else:
                 draw_playing_card(screen, left, ent_alice, True, t_anim)
                 draw_playing_card(screen, right, ent_pair[1], True, t_anim)
-                flash = int(80 + 80 * abs(math.sin(t_anim * 8)))
-                pygame.draw.rect(screen, (*GOLD, min(255, flash)), right, 4, border_radius=12)
+                # RGB only — RGBA on default display surface can misbehave on some pygame builds
+                pygame.draw.rect(screen, GOLD, right, 4, border_radius=12)
 
             para = [
                 "Two cards are prepared together in a Bell-like state: |♥♥⟩ + |♠♠⟩ (normalized).",
